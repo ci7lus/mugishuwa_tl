@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
+const logo = require("./assets/mugishuwa.svg")
 
 type Action = {
   debuff: number
@@ -101,7 +102,7 @@ const App: React.FC<{}> = () => {
                   className="font-bold text-lg"
                   style={{ fontFamily: "Avenir Next" }}
                 >
-                  mugishuwa
+                  <img src={logo} width="100px" />
                 </h1>
               </div>
             </a>
