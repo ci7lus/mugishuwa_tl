@@ -205,11 +205,31 @@ const App: React.FC<{}> = () => {
           </div>
         </div>
         {generatedTimeline && (
-          <textarea
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 my-3 leading-tight h-48"
-            readOnly={true}
-            value={generatedTimeline}
-          ></textarea>
+          <>
+            <textarea
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 my-3 leading-tight h-48"
+              readOnly={true}
+              value={generatedTimeline}
+            ></textarea>
+            <div className="flex justify-end">
+              <button
+                className="shadow bg-teal-400 hover:bg-teal-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 mb-2 rounded text-right"
+                type="button"
+                onClick={async () => {
+                  try {
+                    if (navigator.clipboard) {
+                      await navigator.clipboard.writeText(generatedTimeline)
+                      alert("コピーしました")
+                    }
+                  } catch (e) {
+                    console.error(e)
+                  }
+                }}
+              >
+                コピー
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
