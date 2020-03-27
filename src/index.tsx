@@ -241,16 +241,15 @@ const App: React.FC<{}> = () => {
       <div className="bg-gray-800">
         <div className="container mx-auto max-w-screen-md">
           <div className="flex justify-end text-xs p-4 text-gray-200">
-            mugishuwa
-            {/**&nbsp;/&nbsp;
+            mugishuwa&nbsp;/&nbsp;
             <a
               className="text-blue-400"
               target="_blank"
               href="https://github.com/ci7lus/mugishuwa"
               rel="noopener"
             >
-              code
-            </a>**/}
+              code &amp; bug report
+            </a>
           </div>
         </div>
       </div>
