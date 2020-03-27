@@ -66,7 +66,7 @@ const App: React.FC<{}> = () => {
       })
       setTimeline(res)
       const generated = [
-        totalDamage ? `総ダメージ: ${totalDamage}` : null,
+        totalDamageLine,
         res
           .map((line) => {
             const remaining = line.remaining - carryOver
