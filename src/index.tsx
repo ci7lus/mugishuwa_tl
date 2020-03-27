@@ -191,12 +191,12 @@ const App: React.FC<{}> = () => {
                   }
                   return (
                     <tr key={idx}>
-                      <td className="text-left py-3 px-4">{line.debuff}</td>
-                      <td className="text-left py-3 px-4">
+                      <td className="text-left py-1 px-4">{line.debuff}</td>
+                      <td className="text-left py-1 px-4">
                         {minute}:{second.toString().padStart(2, "0")} (
                         {remaining}秒)
                       </td>
-                      <td className="text-left py-3 px-4">{line.character}</td>
+                      <td className="text-left py-1 px-4">{line.character}</td>
                     </tr>
                   )
                 })}
