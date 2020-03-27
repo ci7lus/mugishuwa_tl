@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
 
 type Action = {
-  damage: number
+  debuff: number
   remaining: number
   character: string
 }
@@ -48,17 +48,17 @@ const App: React.FC<{}> = () => {
         return
       }
       const res = damages.map((line) => {
-        const [damageText, remainingText, character] = line
+        const [debuffText, remainingText, character] = line
           .replace("↓", "")
           .trim()
           .split(" ")
-        const damage = parseInt(damageText)
+        const debuff = parseInt(debuffText)
         const [minute, second] = remainingText
           .split(":")
           .map((s) => parseInt(s))
         const totalSeconds = minute * 60 + second
         return {
-          damage,
+          debuff,
           remaining: totalSeconds,
           character,
         } as Action
@@ -77,7 +77,7 @@ const App: React.FC<{}> = () => {
             if (second < 0) {
               second = 0
             }
-            return `↓${line.damage} ${minute}:${second
+            return `↓${line.debuff} ${minute}:${second
               .toString()
               .padStart(2, "0")} ${line.character}`
           })
@@ -168,7 +168,7 @@ const App: React.FC<{}> = () => {
               <thead className="bg-gray-800 text-white">
                 <tr>
                   <th className="text-left py-3 px-4 font-semibold text-sm">
-                    ダメージ
+                    デバフ
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-sm">
                     時間
@@ -191,7 +191,7 @@ const App: React.FC<{}> = () => {
                   }
                   return (
                     <tr key={idx}>
-                      <td className="text-left py-3 px-4">{line.damage}万</td>
+                      <td className="text-left py-3 px-4">{line.debuff}</td>
                       <td className="text-left py-3 px-4">
                         {minute}:{second.toString().padStart(2, "0")} (
                         {remaining}秒)
