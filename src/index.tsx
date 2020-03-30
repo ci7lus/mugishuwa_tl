@@ -32,6 +32,8 @@ const App: React.FC<{}> = () => {
           return
         }
         setCarryOver(90 - (minute * 60 + second))
+      } else {
+        setCarryOver(0)
       }
       const splited = timelineText.split("\n")
       const totalDamageLine = splited.find((s) => s.startsWith("総ダメージ"))
