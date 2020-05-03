@@ -14,10 +14,48 @@ const App: React.FC<{}> = () => {
   const [carryOver, setCarryOver] = useState(0)
   const [carryOverText, setCarryOverText] = useState("")
   const [totalDamage, setTotalDamage] = useState(null as number | null)
-  const [timeline, setTimeline] = useState([] as Action[])
+  const [timeline, _setTimeline] = useState([] as Action[])
   const [generatedTimeline, setGeneratedTimeline] = useState(
     null as string | null
   )
+  const setTimeline = (l: Action[]) => {
+    const sorted = l.sort((a, b) => b.remaining - a.remaining)
+    const totalDamageLine = totalDamage ? `総ダメージ: ${totalDamage}` : null
+    const generated = [
+      totalDamageLine,
+      sorted
+        .map((line) => {
+          const remaining = line.remaining - carryOver
+          let minute = Math.floor(remaining / 60)
+          if (minute < 0) {
+            minute = 0
+          }
+          let second = remaining % 60
+          if (second < 0) {
+            second = 0
+          }
+          return `↓${line.debuff} ${minute}:${second
+            .toString()
+            .padStart(2, "0")} ${characters.get(line.character)}`
+        })
+        .join("\n"),
+    ]
+      .filter((s) => s)
+      .join("\n\n")
+    setGeneratedTimeline(generated)
+    _setTimeline(sorted)
+  }
+  const setTimelinePartial = (idx: number, action: Action) => {
+    const copiedTimeline: Action[] = Object.assign([], timeline)
+    copiedTimeline[idx] = action
+    setTimeline(copiedTimeline)
+  }
+
+  const [characters, setCharacters] = useState(new Map<string, string>())
+  const setCharacter = (k: string, v: string) => {
+    setCharacters(new Map(characters.set(k, v)))
+    setTimeline(timeline)
+  }
 
   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -55,6 +93,7 @@ const App: React.FC<{}> = () => {
           .replace("↓", "")
           .trim()
           .split(" ")
+        setCharacter(character, character)
         const debuff = parseInt(debuffText)
         const [minute, second] = remainingText
           .split(":")
@@ -67,28 +106,6 @@ const App: React.FC<{}> = () => {
         } as Action
       })
       setTimeline(res)
-      const generated = [
-        totalDamageLine,
-        res
-          .map((line) => {
-            const remaining = line.remaining - carryOver
-            let minute = Math.floor(remaining / 60)
-            if (minute < 0) {
-              minute = 0
-            }
-            let second = remaining % 60
-            if (second < 0) {
-              second = 0
-            }
-            return `↓${line.debuff} ${minute}:${second
-              .toString()
-              .padStart(2, "0")} ${line.character}`
-          })
-          .join("\n"),
-      ]
-        .filter((s) => s)
-        .join("\n\n")
-      setGeneratedTimeline(generated)
     } catch (e) {
       console.error(e)
     }
@@ -196,13 +213,46 @@ const App: React.FC<{}> = () => {
                     }
                     return (
                       <tr key={idx}>
-                        <td className="text-left py-1 px-4">{line.debuff}</td>
                         <td className="text-left py-1 px-4">
-                          {minute}:{second.toString().padStart(2, "0")} (
-                          {remaining}秒)
+                          <input
+                            type="number"
+                            className="w-12"
+                            value={line.debuff}
+                            onChange={(e) => {
+                              const parsed = parseInt(e.target.value)
+                              if (Number.isNaN(parsed)) return
+                              setTimelinePartial(idx, {
+                                ...line,
+                                debuff: parsed,
+                              })
+                            }}
+                          ></input>
                         </td>
                         <td className="text-left py-1 px-4">
-                          {line.character}
+                          {minute}:{second.toString().padStart(2, "0")} (
+                          <input
+                            className="w-6 text-right"
+                            type="number"
+                            value={remaining}
+                            onChange={(e) => {
+                              const parsed = parseInt(e.target.value)
+                              if (Number.isNaN(parsed)) return
+                              setTimelinePartial(idx, {
+                                ...line,
+                                remaining: parsed + carryOver,
+                              })
+                            }}
+                          ></input>
+                          秒)
+                        </td>
+                        <td className="text-left py-1 px-4">
+                          <input
+                            className="w-full"
+                            value={characters.get(line.character)}
+                            onChange={(e) => {
+                              setCharacter(line.character, e.target.value)
+                            }}
+                          ></input>
                         </td>
                       </tr>
                     )
