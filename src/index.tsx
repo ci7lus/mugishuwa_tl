@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
+import { ToastContainer, toast, Slide } from "react-toastify"
 const logo = require("./assets/mugishuwa.svg")
 
 type Action = {
@@ -112,6 +113,12 @@ const App: React.FC<{}> = () => {
   }
   return (
     <div className="min-h-screen w-full flex flex-col text-gray-800">
+      <ToastContainer
+        position={"top-left"}
+        autoClose={2500}
+        closeOnClick={true}
+        transition={Slide}
+      />
       <div className="flex-1">
         <div className=" bg-gray-800">
           <div className="flex items-center container mx-auto flex justify-between max-w-screen-md text-gray-200">
@@ -276,7 +283,7 @@ const App: React.FC<{}> = () => {
                     try {
                       if (navigator.clipboard) {
                         await navigator.clipboard.writeText(generatedTimeline)
-                        alert("コピーしました")
+                        toast.info("コピーしました")
                       }
                     } catch (e) {
                       console.error(e)
