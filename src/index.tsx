@@ -4,7 +4,7 @@ import { ToastContainer, toast, Slide } from "react-toastify"
 const logo = require("./assets/mugishuwa.svg")
 
 type Action = {
-  debuff: number
+  debuff: number | null
   remaining: number
   character: string
 }
@@ -35,9 +35,11 @@ const App: React.FC<{}> = () => {
           if (second < 0) {
             second = 0
           }
-          return `↓${line.debuff} ${minute}:${second
-            .toString()
-            .padStart(2, "0")} ${characters.get(line.character)}`
+          return `${
+            line.debuff ? `↓${line.debuff} ` : ""
+          }${minute}:${second.toString().padStart(2, "0")} ${characters.get(
+            line.character
+          )}`
         })
         .join("\n"),
     ]
@@ -84,18 +86,25 @@ const App: React.FC<{}> = () => {
       } else {
         setTotalDamage(null)
       }
-      const damages = splited.filter((s) => s.startsWith("↓"))
+      let damages = splited.filter((s) => s.includes(":"))
       if (damages.length === 0) {
         setErr("タイムテーブルが無効です")
         return
       }
       const res = damages.map((line) => {
-        const [debuffText, remainingText, character] = line
-          .replace("↓", "")
-          .trim()
-          .split(" ")
+        let debuffText: string | null = null
+        let remainingText: string
+        let character: string
+        if (line.includes("↓")) {
+          ;[debuffText, remainingText, character] = line
+            .replace("↓", "")
+            .trim()
+            .split(" ")
+        } else {
+          ;[remainingText, character] = line.trim().split(" ")
+        }
         setCharacter(character, character)
-        const debuff = parseInt(debuffText)
+        const debuff = debuffText ? parseInt(debuffText) : null
         const [minute, second] = remainingText
           .split(":")
           .map((s) => parseInt(s))
@@ -224,7 +233,7 @@ const App: React.FC<{}> = () => {
                           <input
                             type="number"
                             className="w-12"
-                            value={line.debuff}
+                            value={line.debuff || "0"}
                             onChange={(e) => {
                               const parsed = parseInt(e.target.value)
                               if (Number.isNaN(parsed)) return
@@ -238,7 +247,7 @@ const App: React.FC<{}> = () => {
                         <td className="text-left py-1 px-4">
                           {minute}:{second.toString().padStart(2, "0")} (
                           <input
-                            className="w-6 text-right"
+                            className="w-8 text-right"
                             type="number"
                             value={remaining}
                             onChange={(e) => {
